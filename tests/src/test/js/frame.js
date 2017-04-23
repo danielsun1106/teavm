@@ -18,8 +18,10 @@
 
 window.addEventListener("message", event => {
     let request = event.data;
+    dump("Message received within frame\n");
     appendFiles(request.files, 0, () => {
         launchTest(response => {
+            dump("Sending test result to parent frame\n");
             event.source.postMessage(response, "*");
         });
     });
@@ -31,10 +33,16 @@ function appendFiles(files, index, callback) {
     } else {
         let fileName = "file://" + files[index];
         let script = document.createElement("script");
-        script.src = fileName;
+        dump("Loading script " + fileName + "\n");
         script.onload = () => {
+            dump("Script loaded: " + fileName + "\n");
             appendFiles(files, index + 1, callback);
         };
+        script.onerror = () => {
+            dump("Script error: " + fileName + "\n");
+            callback({ status: "failed", errorMessage: "failed to load script: " + fileName });
+        };
+        script.src = fileName;
         document.body.appendChild(script);
     }
 }
@@ -77,5 +85,6 @@ function launchTest(callback) {
 }
 
 function start() {
+    dump("Frame script started\n");
     window.parent.postMessage("ready", "*");
 }

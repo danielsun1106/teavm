@@ -20,7 +20,7 @@ function tryConnect() {
     let ws = new WebSocket("ws://localhost:9090");
 
     ws.onopen = () => {
-        console.log("Connected established");
+        dump("Connected established\n");
         listen(ws);
     };
 
@@ -36,9 +36,9 @@ function listen(ws) {
     ws.onmessage = (event) => {
         let resultConsumer = [];
         let request = JSON.parse(event.data);
-        console.log("Request #" + request.id + " received");
+        dump("Request #" + request.id + " received\n");
         runTests(request.tests, resultConsumer, 0, () => {
-            console.log("Sending response #" + request.id);
+            dump("Sending response #" + request.id + "\n");
             ws.send(JSON.stringify({
                 id: request.id,
                 result: resultConsumer
@@ -60,12 +60,14 @@ function runTests(tests, consumer, index, callback) {
 }
 
 function runSingleTest(test, callback) {
-    console.log("Running test " + test.name + " consisting of " + test.files);
+    dump("Running test " + test.name + " consisting of " + test.files + "\n");
     let iframe = document.getElementById("test");
     let handshakeListener = () => {
+        dump("Handshake message received from frame\n");
         window.removeEventListener("message", handshakeListener);
 
         let listener = event => {
+            dump("Test result message received from frame\n");
             window.removeEventListener("message", listener);
             callback(event.data);
         };

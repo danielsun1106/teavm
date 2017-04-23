@@ -83,7 +83,7 @@ async function runAll() {
         console.log();
     }
 
-    console.log("Tests run: " + runner.testRun + ", failed: " + runner.testsFailed.length
+    console.log("Tests run: " + runner.testsRun + ", failed: " + runner.testsFailed.length
             + ", elapsed " + ((endTime - startTime) / 1000) + " seconds");
 
     if (runner.testsFailed.length > 0) {

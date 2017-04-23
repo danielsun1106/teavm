@@ -40,7 +40,9 @@ script:
   - mvn -e test -P \!htmlUnit
   - BASE_PATH=`pwd`
   - pushd tests/src/test/js
-  - firefox index.html &
+  - mkdir profile
+  - cp user.js profile
+  - firefox index.html --profile profile &
   - FIREFOX_PID=$!
   - node start.js $BASE_PATH/tests/target/js-tests
   - node start.js $BASE_PATH/html4j/target/js-tests
